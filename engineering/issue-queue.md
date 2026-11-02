@@ -6,7 +6,7 @@ closed immediately with a link to the fix commit), and this file is retired.
 
 | No. | Repository | Title | Found on | Fix branch | Status |
 |-----|-----------|-------|----------|-----------|--------|
-| L1 | marketpilot-shared | Check failed: `@marketpilot/config` build: TS2591 cannot find name `process` (Node types not loaded) | `develop` @ ab37fc7 | `fix/L1-node-types` | open |
+| L1 | marketpilot-shared | Check failed: `@marketpilot/config` build: TS2591 cannot find name `process` (Node types not loaded) | `develop` @ ab37fc7 | `fix/L1-node-types` | closed (marketpilot-shared 0c1776c) |
 
 ## L1 details
 
