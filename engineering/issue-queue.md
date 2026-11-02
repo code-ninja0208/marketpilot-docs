@@ -7,7 +7,7 @@ closed immediately with a link to the fix commit), and this file is retired.
 | No. | Repository | Title | Found on | Fix branch | Status |
 |-----|-----------|-------|----------|-----------|--------|
 | L1 | marketpilot-shared | Check failed: `@marketpilot/config` build: TS2591 cannot find name `process` (Node types not loaded) | `develop` @ ab37fc7 | `fix/L1-node-types` | closed (marketpilot-shared 0c1776c) |
-| L2 | marketpilot-shared | Check failed: Docker build: clean `pnpm install` rejects `msgpackr-extract` build script | `main` @ c14a2b4 | `fix/L2-allow-builds` | open |
+| L2 | marketpilot-shared | Check failed: Docker build: clean `pnpm install` rejects `msgpackr-extract` build script | `main` @ c14a2b4 | `fix/L2-allow-builds` | closed (marketpilot-shared 553f5c8, marketpilot-worker 85e2ec9) |
 
 ## L1 details
 
