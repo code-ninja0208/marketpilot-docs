@@ -1,6 +1,8 @@
 # Git Workflow
 
-Author identity for this repository: `code-ninja0208 <contributor0208@hotmail.com>` (set in the repo's local git config).
+These rules apply to **every** MarketPilot repository (see `architecture/decisions/0001-separate-repositories.md`).
+Author identity: `code-ninja0208 <contributor0208@hotmail.com>`, set in each repository's local git config.
+Branches, issues and tags are per repository; issues go in the repository whose test failed.
 
 ## Branches
 
@@ -8,7 +10,7 @@ Author identity for this repository: `code-ninja0208 <contributor0208@hotmail.co
 |--------|---------|--------------|-------------|
 | `main` | Released, deployable code. Only receives merges from `develop` (and hotfixes). | — | — |
 | `develop` | Integration branch for ongoing work. | `main` | `main`, when a module is finished |
-| `feat/<task-id>-<name>` | One module from `docs/planning/03-development-plan.md`, e.g. `feat/W2-3-tenant-context` | `develop` | `develop` |
+| `feat/<task-id>-<name>` | One module from `planning/03-development-plan.md`, e.g. `feat/W2-3-tenant-context` | `develop` | `develop` |
 | `fix/<issue-no>-<name>` | Fix for one issue (failed test), e.g. `fix/12-claim-race` | `develop` | `develop` |
 
 ## Commits
@@ -37,7 +39,7 @@ Author identity for this repository: `code-ninja0208 <contributor0208@hotmail.co
 
 ## Release tags
 
-Annotated tags on `main`, using semantic versioning, one per milestone in `docs/planning/03-development-plan.md`:
+Annotated tags on `main` of each repository that changed, using semantic versioning, one per milestone in `planning/03-development-plan.md`:
 
 | Tag | Milestone |
 |-----|-----------|

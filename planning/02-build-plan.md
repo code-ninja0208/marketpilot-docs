@@ -49,6 +49,9 @@ CI enforces the documentation with `eslint-plugin-jsdoc` (`require-jsdoc` on exp
 
 ## 2. Canonical repository structure (replaces the three trees in the PDF)
 
+> **Updated by ADR 0001:** each `apps/*` entry below is now its own repository (`marketpilot-<name>`),
+> and `packages/*` live in `marketpilot-shared`. The folder layout *inside* each project is unchanged.
+
 ```
 marketpilot/
 ├── apps/

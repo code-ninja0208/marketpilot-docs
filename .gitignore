@@ -1,19 +1,6 @@
 # Source material (private ChatGPT export, kept out of the repo)
-docs/planning/Example.pdf
-
-# Dependencies and build output
-node_modules/
-.turbo/
-.next/
-dist/
-coverage/
-
-# Environment and secrets
-.env
-.env.*
-!.env.example
+planning/Example.pdf
 
 # OS / editor
 .DS_Store
 .vscode/*
-!.vscode/extensions.json
