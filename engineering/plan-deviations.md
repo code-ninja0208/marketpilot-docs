@@ -5,7 +5,7 @@ when it is resolved. Updated at each milestone.
 
 | Task | Plan | What was built | Why | Resolve by |
 |------|------|----------------|-----|-----------|
-| W0-2, W0-3, W0-5, W0-6 | Vision/scope/pricing docs, unit economics, PRD, Meta app | Not done (W0-1 ADRs and W0-4 schema are done) | Development started first by request; W0-6 needs the owner's Meta account | Before Week 3 (W0-5 PRD) and Week 8 (W0-6) |
+| W0-2, W0-3, W0-6 | Vision/scope/pricing docs, unit economics, Meta app | Not done (W0-1 ADRs, W0-4 schema, W0-5 PRD are done) | Development started first by request; W0-6 needs the owner's Meta account | W0-3 before Week 11; W0-6 before Week 8 |
 | W1-1 | One monorepo | One repository per project (ADR 0001) | Owner's request | — (accepted) |
 | W1-4 | Logger + OpenTelemetry tracing | Logger only | Disk and scope; nothing to trace across yet | W12 |
 | W1-6 | GitHub Actions CI | Local `pnpm check` gate before every merge | No GitHub remote yet | When repositories are on GitHub |
