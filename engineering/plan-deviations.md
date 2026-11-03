@@ -13,5 +13,10 @@ when it is resolved. Updated at each milestone.
 | W2-5 | Invitation emails | `logMailer` writes the link to the API log | No email provider yet | Before pilot (W12); `main.ts` refuses production without a real mailer |
 | W2-6 | Playwright E2E | End-to-end flow scripted with HTTP requests against the full Docker stack | Browser binaries do not fit the build machine's disk | W12 (run on CI or the VPS) |
 | W2-7 | Admin MFA via provider | MFA read from the token's `amr` claim; development staff sign-in simulates it | Same as W2-1 | With W2-1 |
+| W5-1 | Provider chosen by evals | Claude (`claude-opus-5-5`) chosen by the owner; real-model eval run pending | No Anthropic API key yet; worker runs `AI_PROVIDER=demo` | When the key is provided |
+| W5-2 | Plan from subscription | Every organization is on Free (30 credits) | Subscriptions arrive with billing | W11-1 |
+| W5-3 | Brief facts | A brief without selected facts uses the business's active facts (max 30) | Campaign form does not select facts yet | W6 content editor |
+| W5-4 | `packages/ai/evals/*`, nightly CI | `packages/ai/src/evals/*` (built with the package); run manually | No CI yet (see W1-6); keeps evals type-checked with the code | With CI |
+| W5-5 | Component test (DOM) | Render tests with `react-dom/server`; panel checked by an HTTP end-to-end run | No DOM test library or browser on the build machine | W12 Playwright |
 | — | TypeScript 7 | TypeScript 6.0 | typescript-eslint does not support 7 yet | When supported |
 | — | Lean images | API/worker images ~1 GB | Prisma 7 CLI (needed for migrations) is large | Separate migrate image, W11 |
