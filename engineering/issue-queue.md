@@ -8,6 +8,7 @@ closed immediately with a link to the fix commit), and this file is retired.
 |-----|-----------|-------|----------|-----------|--------|
 | L1 | marketpilot-shared | Check failed: `@marketpilot/config` build: TS2591 cannot find name `process` (Node types not loaded) | `develop` @ ab37fc7 | `fix/L1-node-types` | closed (marketpilot-shared 0c1776c) |
 | L2 | marketpilot-shared | Check failed: Docker build: clean `pnpm install` rejects `msgpackr-extract` build script | `main` @ c14a2b4 | `fix/L2-allow-builds` | closed (marketpilot-shared 553f5c8, marketpilot-worker 85e2ec9) |
+| L3 | marketpilot-worker | Integration test failed once: `prisma-store.int.test.ts` both tests threw `PrismaClientKnownRequestError` | `feat/W5-3-generation-processor` (uncommitted) | — (not reproducible) | closed: passed 3 reruns; no code change |
 
 ## L1 details
 
@@ -24,3 +25,13 @@ closed immediately with a link to the fix commit), and this file is retired.
   `allowBuilds` lists only `esbuild`, and a clean install treats unlisted build scripts as an error.
   The local install had passed because the dependency was added incrementally.
 - **Affects:** marketpilot-shared and marketpilot-worker (both depend on bullmq).
+
+## L3 details
+
+- **Command:** `pnpm test:integration` (marketpilot-worker), 2026-11-03 ~13:14
+- **Output:** both tests failed with `PrismaClientKnownRequestError`; the error text was not captured
+  (the session was interrupted while reading it).
+- **Cause (likely):** a second Claude session was running Week 5 in the same working trees and
+  against the same development database at the same time. Passed on three reruns with only one
+  session active.
+- **Prevention:** only one session works in the `marketpilot-*` repositories at a time.

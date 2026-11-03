@@ -91,13 +91,20 @@ Primary key `(org_id, key)`. Same key + same hash → replay; same key + other h
 ## 4. AI and usage (W5)
 
 **ai_generations**: `id`, `org_id`, `campaign_id`, `status text check (queued|running|succeeded|failed)`,
-`input jsonb`, `output jsonb`, `reservation_id`, `credits_used int`, `error_code text`.
+`input jsonb` ({platforms, variants, instructions}), `output jsonb` ({items}; set exactly when
+succeeded), `reservation_id` (unique per org), `credits_reserved int > 0`,
+`credits_used int` (0..reserved), `provider`, `model`, `input_tokens`, `output_tokens`,
+`cost_usd numeric(12,6)`, `attempts int`, `error_code text`, `requested_by`, `started_at`,
+`completed_at`. FKs `(org_id, campaign_id)` and `(org_id, reservation_id)`.
 
-**usage_reservations**: `id`, `org_id`, `resource text` (e.g. `ai_credits`), `amount int`,
-`status text check (reserved|settled|released)`, `expires_at`.
+**usage_reservations**: `id`, `org_id`, `resource text` (e.g. `ai_credits`), `amount int > 0`,
+`status text check (reserved|settled|released)`, `period text` (`YYYY-MM`), `expires_at`,
+`settled_at`. Reservations lock the organization row, so concurrent requests cannot overspend;
+expired holds stop counting.
 
-**usage_events**: `id`, `org_id`, `resource`, `quantity int`, `unit_cost_usd numeric(12,6)`,
-`period text` (`YYYY-MM`), `source_id uuid`. Index `(org_id, resource, period)`.
+**usage_events**: `id`, `org_id`, `resource`, `quantity int > 0`, `unit_cost_usd numeric(12,6)`,
+`period text` (`YYYY-MM`), `source_id uuid`. Index `(org_id, resource, period)`. Append-only
+(trigger).
 
 ## 5. Content (W6)
 
