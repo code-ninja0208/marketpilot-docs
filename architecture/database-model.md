@@ -132,16 +132,19 @@ resource belongs to the organization before inserting (B11); `post_target` comme
 
 ## 6. Publishing (W7–W10)
 
-**post_targets**: `id`, `org_id`, `draft_id`, `social_account_id`, `placement_key text` (B1),
-`state text` (states of `packages/domain` publication state machine), `approved_revision_id`,
-`scheduled_at`, `external_post_id`, `external_url`, `lease_owner text`, `lease_expires_at`,
-`fencing_token bigint not null default 0` (B2), `version`.
-Unique `(draft_id, social_account_id, placement_key)`. Index `(state, scheduled_at)` for dispatch.
-Tenant consistency: the social account must belong to the same business as the draft's campaign
+**post_targets**: `id`, `org_id`, `draft_id`, `placement_key text check (feed)` (B1),
+`state text` (states of the `@marketpilot/domain` publication state machine), `submitted_revision_id`,
+`submitted_by`, `submitted_at` (required while `pending_approval`), `approved_revision_id` (required
+from `approved` onwards), `scheduled_at`, `external_post_id`, `external_url`, `lease_owner text`,
+`lease_expires_at`, `fencing_token bigint not null default 0` (B2), `version` (every change bumps it;
+writers name the version they read). Unique `(draft_id, placement_key)`. Index `(state, scheduled_at)`
+for dispatch. **W8** adds `social_account_id`, widens the unique key to
+`(draft_id, social_account_id, placement_key)` and checks the account belongs to the draft's business
 (service check + composite foreign key on `(org_id, business_id)`).
 
 **approvals**: `id`, `org_id`, `target_id`, `revision_id`, `reviewer_id`,
-`decision text check (approved|rejected)`, `reason text`, `invalidated_at`.
+`decision text check (approved|rejected)`, `reason text` (1–1,000 characters, required to reject),
+`invalidated_at` (set when the content is edited, fix C3).
 Partial unique `(target_id) where decision = 'approved' and invalidated_at is null`
 → at most one effective approval (APP-02).
 
@@ -150,8 +153,10 @@ Partial unique `(target_id) where decision = 'approved' and invalidated_at is nu
 `provider_request_id`, `external_container_id`, `error_code`. Unique `(target_id, attempt_no)`.
 An attempt with `started_at` and no `finished_at` after its lease expired → reconciliation.
 
-**outbox_events**: `id`, `org_id`, `event_type`, `aggregate_id`, `payload jsonb`, `processed_at`.
-Index `(processed_at) where processed_at is null`.
+**outbox_events**: `id`, `org_id`, `event_type`, `aggregate_id`, `payload jsonb`, `attempts`,
+`last_error`, `processed_at`. Index `(processed_at, created_at)`. Written in the transaction of the
+change (W7: `target.submitted|approved|rejected|returned_to_draft|canceled`); the worker delivers
+batches with `FOR UPDATE SKIP LOCKED` and sets an event aside after 10 failed attempts.
 
 **metric_snapshots**: `id`, `org_id`, `target_id`, `captured_at`, `impressions int`, `reach int`,
 `engagements int`, `clicks int`. Index `(target_id, captured_at)`.
