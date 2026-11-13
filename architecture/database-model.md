@@ -108,18 +108,27 @@ expired holds stop counting.
 
 ## 5. Content (W6)
 
-**content_drafts**: `id`, `org_id`, `campaign_id`, `platform text`, `status text check (active|archived)`.
+**content_drafts**: `id`, `org_id`, `campaign_id`, `platform text check (facebook|instagram)`,
+`status text check (active|archived)`, `current_revision_no int >= 1` (optimistic concurrency: a
+save names the revision it started from and advances this number only if it is still current),
+`generation_id` + `generation_item` (both or neither; unique per organization, so each generated
+post becomes at most one draft), `created_by`.
 
-**content_revisions**: `id`, `org_id`, `draft_id`, `revision_no int`, `body text`,
-`media_asset_ids uuid[]`, `generation_id` (nullable), `created_by`. Unique `(draft_id, revision_no)`.
-Immutable: never updated after insert.
+**content_revisions**: `id`, `org_id`, `draft_id`, `revision_no int`, `body text` (caption as
+published, hashtags included, 1–5,000 characters), `media_asset_ids uuid[]` (at most 10, in display
+order), `source text check (generated|written|edited|restored)`, `generation_id` (nullable),
+`created_by`. Unique `(draft_id, revision_no)`. **Immutable**: a trigger rejects every update and
+delete (APP-01, fix C3).
 
-**media_assets**: `id`, `org_id`, `business_id`, `storage_key text unique`, `mime_type`,
-`size_bytes bigint`, `width int`, `height int`, `checksum_sha256 bytea`,
-`status text check (pending_upload|ready|rejected)`.
+**media_assets**: `id`, `org_id`, `business_id`, `storage_key text unique`, `file_name`,
+`mime_type`, `size_bytes bigint > 0`, `width int`, `height int`, `checksum_sha256 bytea` (32 bytes,
+declared by the uploader), `status text check (pending_upload|ready|rejected)`, `reject_reason`
+(exactly when rejected), `uploaded_by`, `upload_expires_at`, `confirmed_at`. `ready` requires
+dimensions and `confirmed_at`. Files live in object storage (ADR 0008).
 
 **comments**: `id`, `org_id`, `resource_type text check (campaign|draft|post_target)`,
-`resource_id uuid`, `author_id`, `body text`, `deleted_at`.
+`resource_id uuid`, `author_id`, `body text` (1–2,000 characters), `deleted_at`. The API checks the
+resource belongs to the organization before inserting (B11); `post_target` comments arrive in W7.
 
 ## 6. Publishing (W7–W10)
 
