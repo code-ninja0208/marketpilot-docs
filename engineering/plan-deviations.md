@@ -18,10 +18,14 @@ when it is resolved. Updated at each milestone.
 | W5-3 | Brief facts | A brief without selected facts uses the business's active facts (max 30) | Campaign form does not select facts yet | W7 (brief editing; not part of the W6 editor) |
 | W5-4 | `packages/ai/evals/*`, nightly CI | `packages/ai/src/evals/*` (built with the package); run manually | No CI yet (see W1-6); keeps evals type-checked with the code | With CI |
 | W5-5 | Component test (DOM) | Render tests with `react-dom/server`; panel checked by an HTTP end-to-end run | No DOM test library or browser on the build machine | W12 Playwright |
-| W6-1 | Edit invalidates approval (fix C3) | Every edit is a new immutable revision; approvals are not invalidated yet | Post targets and approvals do not exist until W7; the revision transaction marks where it goes | W7-3 |
+| W6-1 | Edit invalidates approval (fix C3) | Every edit is a new immutable revision; approvals are not invalidated yet | Post targets and approvals do not exist until W7; the revision transaction marks where it goes | Resolved in W7-3 |
 | W6-2 | MinIO, any media | SeaweedFS (ADR 0008); JPEG and PNG images up to 8 MB; no cleanup of abandoned uploads | MinIO community edition is archived; video and WebP are not needed for the first posts | Video with W9 publishing if needed; cleanup job W11 |
 | W6-2 | Verified against real storage | Upload flow tested with an in-memory store; the S3 code is unit-tested (signed URLs) but not run against SeaweedFS | Pulling the SeaweedFS image was blocked on the build machine | First staging deploy |
-| W6-3 | Comments on post targets | Comments on campaigns and drafts | Post targets arrive in W7 | W7 |
+| W6-3 | Comments on post targets | Comments on campaigns and drafts | Post targets arrive in W7 | Resolved in W7-3 |
 | W6-4, W6-5 | Playwright, E2E in a browser | Render tests and an HTTP end-to-end run (goal → brief → AI → draft → edit → comment) through the client proxy; bundle budget checked by `scripts/bundle-budget.mjs` | Same as W2-6 | W12 |
+| W7-2 | `createTarget(ctx, draftId, accountId, placementKey)` with the account/business check | A target is created on first submit for the draft's platform feed, without an account | Social accounts arrive with the Meta connection in W8; in the MVP a business has one account per platform, so approval covers content, platform and placement | W8 (account column, business check) |
+| W7-3 | Org setting `require_separate_reviewer` (F3) | Enforced by the API; no settings screen to switch it on | Not needed by the first pilot teams | W10 settings |
+| W7-4 | Outbox delivered to consumers | The worker delivers review events to a logging handler | Email and in-app notifications are not built yet | With notifications (post-W9) |
+| W7-5 | Playwright on the approvals screen | Unit tests and an HTTP end-to-end run with an invited reviewer | Same as W2-6 | W12 |
 | — | TypeScript 7 | TypeScript 6.0 | typescript-eslint does not support 7 yet | When supported |
 | — | Lean images | API/worker images ~1 GB | Prisma 7 CLI (needed for migrations) is large | Separate migrate image, W11 |
