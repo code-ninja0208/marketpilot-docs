@@ -75,7 +75,7 @@ Append-only: the application role has no `UPDATE`/`DELETE` grant on this table.
 
 **marketing_objectives**: `id`, `org_id`, `strategy_id`, `metric text` (e.g. `inquiries`),
 `target_value numeric not null`, `due_date date not null`, `baseline_value numeric`.
-An objective is measurable only with metric + target + date (W4-2).
+An objective is measurable only with metric + target + date (W4-2). `current_value` + `current_value_at` (W10: the result so far, entered by the team; social metrics cannot count business outcomes such as inquiries).
 
 **campaigns**: `id`, `org_id`, `business_id`, `objective_id`, `title`,
 `status text check (draft|active|completed|archived)`, `starts_on date`, `ends_on date`
@@ -163,8 +163,11 @@ target is reconciled with the platform.
 change (W7: `target.submitted|approved|rejected|returned_to_draft|canceled`); the worker delivers
 batches with `FOR UPDATE SKIP LOCKED` and sets an event aside after 10 failed attempts.
 
-**metric_snapshots**: `id`, `org_id`, `target_id`, `captured_at`, `impressions int`, `reach int`,
-`engagements int`, `clicks int`. Index `(target_id, captured_at)`.
+**metric_snapshots**: `id`, `org_id`, `target_id`, `captured_at`, `views int`, `reach int`,
+`engagements int`, `clicks int` (each nullable: `null` means the platform did not report it; Meta
+retired impressions in 2025 and `views` replaces them). Indexes `(target_id, captured_at)`,
+`(org_id, captured_at)`. A row per collection (every 6 hours for 30 days after publication); reports
+use the newest row per post.
 
 ## 7. Integrations (W8)
 

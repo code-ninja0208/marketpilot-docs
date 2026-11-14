@@ -73,3 +73,21 @@ owner has to set up in Meta, and what is still open. Code: `marketpilot-shared/p
 
 For local end-to-end runs the worker can talk to a fake Graph API (`META_GRAPH_BASE_URL`); never set
 it on staging or production.
+
+## Metrics (W10)
+
+Every 6 hours the worker reads the metrics of posts published in the last 30 days (Meta updates most
+numbers daily; Instagram's can lag up to 48 hours):
+
+- **Facebook post:** `GET /{post-id}/insights?metric=post_media_view,post_total_media_view_unique,post_clicks,post_reactions_by_type_total`
+  (views, unique views as reach, clicks, reactions) and `GET /{post-id}?fields=shares,comments.limit(0).summary(true)`.
+  Engagements = reactions + comments + shares. Meta deprecated `post_impressions*` in 2025.
+- **Instagram media:** `GET /{media-id}/insights?metric=views,reach,total_interactions`, falling back to
+  `like_count + comments_count`. Instagram reports no clicks for feed posts.
+- Permissions: `read_insights` and `instagram_manage_insights` (requested since W10, so accounts
+  connected before must reconnect once).
+- A refused read (missing permission, unsupported metric) leaves that number empty instead of
+  failing the collection; outages are retried on the next run.
+- **Open point:** Meta's Instagram insights reference lists Facebook *user* tokens, not Page tokens,
+  for apps using Facebook Login. MarketPilot stores Page tokens; if Instagram insights are refused
+  with the real app, store the long-lived user token as well (it expires after about 60 days).
