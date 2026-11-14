@@ -23,9 +23,13 @@ when it is resolved. Updated at each milestone.
 | W6-2 | Verified against real storage | Upload flow tested with an in-memory store; the S3 code is unit-tested (signed URLs) but not run against SeaweedFS | Pulling the SeaweedFS image was blocked on the build machine | First staging deploy |
 | W6-3 | Comments on post targets | Comments on campaigns and drafts | Post targets arrive in W7 | Resolved in W7-3 |
 | W6-4, W6-5 | Playwright, E2E in a browser | Render tests and an HTTP end-to-end run (goal → brief → AI → draft → edit → comment) through the client proxy; bundle budget checked by `scripts/bundle-budget.mjs` | Same as W2-6 | W12 |
-| W7-2 | `createTarget(ctx, draftId, accountId, placementKey)` with the account/business check | A target is created on first submit for the draft's platform feed, without an account | Social accounts arrive with the Meta connection in W8; in the MVP a business has one account per platform, so approval covers content, platform and placement | W8 (account column, business check) |
+| W7-2 | `createTarget(ctx, draftId, accountId, placementKey)` with the account/business check | A target is created on first submit for the draft's platform feed, without an account; W8 added the account column | In the MVP a business has one account per platform, so approval covers content, platform and placement | W9-1 (account set and checked at scheduling) |
 | W7-3 | Org setting `require_separate_reviewer` (F3) | Enforced by the API; no settings screen to switch it on | Not needed by the first pilot teams | W10 settings |
 | W7-4 | Outbox delivered to consumers | The worker delivers review events to a logging handler | Email and in-app notifications are not built yet | With notifications (post-W9) |
 | W7-5 | Playwright on the approvals screen | Unit tests and an HTTP end-to-end run with an invited reviewer | Same as W2-6 | W12 |
+| W0-6 | Meta developer app registered | Not done; `integrations/meta.md` lists what to set up | Needs the owner's Meta account | Before the first staging test of W8/W9 |
+| W8-3 | Contract tests with recorded fixtures; `fetchMetrics` | Fixtures shaped like Meta's reference docs, not live recordings; `fetchMetrics` not in the interface yet | No Meta app to record with; metrics belong to W10 analytics | Record with the test Page; metrics W10 |
+| W8-4 | `refreshExpiringTokens` | `checkAccountTokens`: verifies tokens daily and flags expired or refused ones | Page tokens from a long-lived user token do not expire, so there is nothing to refresh; invalidation is what happens in practice | — (accepted) |
+| W8-5 | Playwright with a mocked provider | Unit tests; the connect flow is covered by API integration tests with a fake Graph API | Same as W2-6 | W12 |
 | — | TypeScript 7 | TypeScript 6.0 | typescript-eslint does not support 7 yet | When supported |
 | — | Lean images | API/worker images ~1 GB | Prisma 7 CLI (needed for migrations) is large | Separate migrate image, W11 |

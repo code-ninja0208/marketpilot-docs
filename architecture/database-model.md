@@ -138,9 +138,9 @@ resource belongs to the organization before inserting (B11); `post_target` comme
 from `approved` onwards), `scheduled_at`, `external_post_id`, `external_url`, `lease_owner text`,
 `lease_expires_at`, `fencing_token bigint not null default 0` (B2), `version` (every change bumps it;
 writers name the version they read). Unique `(draft_id, placement_key)`. Index `(state, scheduled_at)`
-for dispatch. **W8** adds `social_account_id`, widens the unique key to
-`(draft_id, social_account_id, placement_key)` and checks the account belongs to the draft's business
-(service check + composite foreign key on `(org_id, business_id)`).
+for dispatch. `social_account_id` (W8, composite foreign key on `(org_id, social_account_id)`) is set
+when the target is scheduled (W9), from the business's one connected account for the platform; the
+service checks it belongs to the draft's business.
 
 **approvals**: `id`, `org_id`, `target_id`, `revision_id`, `reviewer_id`,
 `decision text check (approved|rejected)`, `reason text` (1–1,000 characters, required to reject),
@@ -164,12 +164,19 @@ batches with `FOR UPDATE SKIP LOCKED` and sets an event aside after 10 failed at
 ## 7. Integrations (W8)
 
 **social_accounts**: `id`, `org_id`, `business_id`, `provider text check (facebook|instagram)`,
-`external_account_id`, `display_name`, `token_ciphertext bytea`, `token_key_id text`,
-`token_expires_at`, `status text check (active|reconnect_required|disconnected)`.
-Unique `(business_id, provider, external_account_id)`.
+`external_account_id`, `display_name`, `page_id` (the Page an Instagram account publishes through;
+required for Instagram), `token_ciphertext bytea` (envelope-encrypted Page token; emptied on
+disconnect), `token_key_id text`, `token_expires_at` (null: no known expiry), `scopes text[]`,
+`status text check (active|reconnect_required|disconnected)`, `last_checked_at`, `last_error`,
+`connected_by`. Unique `(business_id, provider, external_account_id)`; partial unique
+`(business_id, provider) where status <> 'disconnected'` → one connected account per platform.
 
-**oauth_states**: `state_hash bytea primary key`, `org_id`, `business_id`, `user_id`, `provider`,
-`pkce_verifier_ciphertext bytea`, `expires_at`, `used_at`. Single use: `used_at` set atomically.
+**oauth_states**: `id` (the connection id shown to the browser after the callback),
+`state_hash bytea unique` (SHA-256 of the state; the state itself is never stored), `org_id`,
+`business_id`, `user_id`, `provider check (meta)`, `pkce_verifier_ciphertext bytea`, `pkce_key_id`,
+`expires_at` (10 minutes), `used_at` (set atomically: single use), `result_ciphertext` /
+`result_key_id` / `result_expires_at` (the user's Pages, encrypted, 15 minutes), `consumed_at`
+(a Page was chosen; the stored Pages are deleted).
 
 ## 8. Billing (W11)
 
