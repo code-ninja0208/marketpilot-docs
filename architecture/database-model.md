@@ -135,10 +135,12 @@ resource belongs to the organization before inserting (B11); `post_target` comme
 **post_targets**: `id`, `org_id`, `draft_id`, `placement_key text check (feed)` (B1),
 `state text` (states of the `@marketpilot/domain` publication state machine), `submitted_revision_id`,
 `submitted_by`, `submitted_at` (required while `pending_approval`), `approved_revision_id` (required
-from `approved` onwards), `scheduled_at`, `external_post_id`, `external_url`, `lease_owner text`,
+from `approved` onwards), `scheduled_at`, `next_attempt_at` (retry backoff), `last_error`, `published_at`, `external_post_id`, `external_url`, `lease_owner text`,
 `lease_expires_at`, `fencing_token bigint not null default 0` (B2), `version` (every change bumps it;
-writers name the version they read). Unique `(draft_id, placement_key)`. Index `(state, scheduled_at)`
-for dispatch. `social_account_id` (W8, composite foreign key on `(org_id, social_account_id)`) is set
+writers name the version they read). Partial unique `(draft_id, placement_key) where state <> 'canceled'`
+(canceled targets stay as history and the draft can be submitted again). Indexes `(state, scheduled_at)`
+and `(state, next_attempt_at)` for dispatch. Checks: scheduled-and-later states have a time and an
+account, `publishing` has a lease, `published` has the external post. `social_account_id` (W8, composite foreign key on `(org_id, social_account_id)`) is set
 when the target is scheduled (W9), from the business's one connected account for the platform; the
 service checks it belongs to the draft's business.
 
@@ -148,10 +150,13 @@ service checks it belongs to the draft's business.
 Partial unique `(target_id) where decision = 'approved' and invalidated_at is null`
 → at most one effective approval (APP-02).
 
-**publish_attempts**: `id`, `org_id`, `target_id`, `attempt_no int`, `fencing_token bigint`,
-`started_at`, `finished_at`, `outcome text check (success|transient_error|definitive_error|unknown)`,
-`provider_request_id`, `external_container_id`, `error_code`. Unique `(target_id, attempt_no)`.
-An attempt with `started_at` and no `finished_at` after its lease expired → reconciliation.
+**publish_attempts**: `id`, `org_id`, `target_id`, `attempt_no int` (unique per target),
+`fencing_token bigint` (copied from the claim), `worker_id`, `started_at`, `provider_called_at`
+(set just before the platform call), `finished_at`, `outcome text check
+(success|transient_error|definitive_error|unknown|abandoned)` (exactly when finished), `prepared jsonb`
+(Instagram container or Facebook photo ids, reused by the next attempt), `error_code`, `error_message`.
+An attempt whose claim expired without `provider_called_at` is abandoned and retried; with it, the
+target is reconciled with the platform.
 
 **outbox_events**: `id`, `org_id`, `event_type`, `aggregate_id`, `payload jsonb`, `attempts`,
 `last_error`, `processed_at`. Index `(processed_at, created_at)`. Written in the transaction of the
