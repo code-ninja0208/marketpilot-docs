@@ -56,3 +56,20 @@ owner has to set up in Meta, and what is still open. Code: `marketpilot-shared/p
 - The connectors' contract tests use answers shaped like Meta's reference documentation, not
   recordings of live calls. Record real answers with the test Page once the app exists.
 - Metrics (`fetchMetrics`) arrive with analytics in Week 10.
+
+## Publishing pipeline (W9)
+
+1. *Schedule* (or *Publish now*) checks approval, the business's connected account, the platform's
+   own content rules and the monthly limit, then stores the UTC time and the account.
+2. Every 30 seconds the worker moves due targets (and retries whose backoff elapsed) to `queued`
+   and enqueues one job per queued episode (`<targetId>-v<version>`); targets left `queued` are
+   enqueued again, so losing Redis only delays publishing.
+3. A job claims its target with a lease and a new fencing token, prepares the media (or reuses the
+   previous attempt's container), records that the platform is about to be called, publishes, and
+   writes the outcome only while its fencing token is still current.
+4. Temporary failures retry after 1, 2, 4… minutes (or Meta's hint) up to 5 attempts; a refused
+   token fails the post and flags the account; uncertain outcomes are reconciled by searching the
+   Page's posts or the Instagram container and media, and go to manual review after an hour.
+
+For local end-to-end runs the worker can talk to a fake Graph API (`META_GRAPH_BASE_URL`); never set
+it on staging or production.
