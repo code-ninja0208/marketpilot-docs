@@ -23,7 +23,7 @@ when it is resolved. Updated at each milestone.
 | W6-2 | Verified against real storage | Upload flow tested with an in-memory store; the S3 code is unit-tested (signed URLs) but not run against SeaweedFS | Pulling the SeaweedFS image was blocked on the build machine | First staging deploy |
 | W6-3 | Comments on post targets | Comments on campaigns and drafts | Post targets arrive in W7 | Resolved in W7-3 |
 | W6-4, W6-5 | Playwright, E2E in a browser | Render tests and an HTTP end-to-end run (goal → brief → AI → draft → edit → comment) through the client proxy; bundle budget checked by `scripts/bundle-budget.mjs` | Same as W2-6 | W12 |
-| W7-2 | `createTarget(ctx, draftId, accountId, placementKey)` with the account/business check | A target is created on first submit for the draft's platform feed, without an account; W8 added the account column | In the MVP a business has one account per platform, so approval covers content, platform and placement | W9-1 (account set and checked at scheduling) |
+| W7-2 | `createTarget(ctx, draftId, accountId, placementKey)` with the account/business check | A target is created on first submit for the draft's platform feed; its account is set at scheduling from the business's connected account | In the MVP a business has one account per platform, so approval covers content, platform and placement | Resolved in W9-1 |
 | W7-3 | Org setting `require_separate_reviewer` (F3) | Enforced by the API; no settings screen to switch it on | Not needed by the first pilot teams | W10 settings |
 | W7-4 | Outbox delivered to consumers | The worker delivers review events to a logging handler | Email and in-app notifications are not built yet | With notifications (post-W9) |
 | W7-5 | Playwright on the approvals screen | Unit tests and an HTTP end-to-end run with an invited reviewer | Same as W2-6 | W12 |
@@ -31,5 +31,8 @@ when it is resolved. Updated at each milestone.
 | W8-3 | Contract tests with recorded fixtures; `fetchMetrics` | Fixtures shaped like Meta's reference docs, not live recordings; `fetchMetrics` not in the interface yet | No Meta app to record with; metrics belong to W10 analytics | Record with the test Page; metrics W10 |
 | W8-4 | `refreshExpiringTokens` | `checkAccountTokens`: verifies tokens daily and flags expired or refused ones | Page tokens from a long-lived user token do not expire, so there is nothing to refresh; invalidation is what happens in practice | — (accepted) |
 | W8-5 | Playwright with a mocked provider | Unit tests; the connect flow is covered by API integration tests with a fake Graph API | Same as W2-6 | W12 |
+| W9 (M3) | Publish to Meta test accounts | The full pipeline (approve → schedule → dispatch → claim → publish → record) ran on the local stack against a local fake Graph API; PUB-01…07 and OPS-01 are integration tests | No Meta app yet (W0-6) | First staging run with the Meta app and a test Page |
+| W9-1 | Plan limits from the subscription | Scheduled-post limit uses the Free plan (5 per month) for everyone; the connected-account limit is not enforced | Same as W5-2: subscriptions arrive with billing | W11-1 |
+| W9-2 | Separate dispatcher and reconcile processors | One 30-second `publishing-tick` job runs `dispatchDue` then `reconcileStale` | One scheduler entry guarantees a single run across workers | — (accepted) |
 | — | TypeScript 7 | TypeScript 6.0 | typescript-eslint does not support 7 yet | When supported |
 | — | Lean images | API/worker images ~1 GB | Prisma 7 CLI (needed for migrations) is large | Separate migrate image, W11 |
