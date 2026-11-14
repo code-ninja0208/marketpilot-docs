@@ -28,11 +28,14 @@ when it is resolved. Updated at each milestone.
 | W7-4 | Outbox delivered to consumers | The worker delivers review events to a logging handler | Email and in-app notifications are not built yet | With notifications (post-W9) |
 | W7-5 | Playwright on the approvals screen | Unit tests and an HTTP end-to-end run with an invited reviewer | Same as W2-6 | W12 |
 | W0-6 | Meta developer app registered | Not done; `integrations/meta.md` lists what to set up | Needs the owner's Meta account | Before the first staging test of W8/W9 |
-| W8-3 | Contract tests with recorded fixtures; `fetchMetrics` | Fixtures shaped like Meta's reference docs, not live recordings; `fetchMetrics` not in the interface yet | No Meta app to record with; metrics belong to W10 analytics | Record with the test Page; metrics W10 |
+| W8-3 | Contract tests with recorded fixtures; `fetchMetrics` | Fixtures shaped like Meta's reference docs, not live recordings; `fetchMetrics` added in W10 | No Meta app to record with | Record with the test Page |
 | W8-4 | `refreshExpiringTokens` | `checkAccountTokens`: verifies tokens daily and flags expired or refused ones | Page tokens from a long-lived user token do not expire, so there is nothing to refresh; invalidation is what happens in practice | — (accepted) |
 | W8-5 | Playwright with a mocked provider | Unit tests; the connect flow is covered by API integration tests with a fake Graph API | Same as W2-6 | W12 |
 | W9 (M3) | Publish to Meta test accounts | The full pipeline (approve → schedule → dispatch → claim → publish → record) ran on the local stack against a local fake Graph API; PUB-01…07 and OPS-01 are integration tests | No Meta app yet (W0-6) | First staging run with the Meta app and a test Page |
 | W9-1 | Plan limits from the subscription | Scheduled-post limit uses the Free plan (5 per month) for everyone; the connected-account limit is not enforced | Same as W5-2: subscriptions arrive with billing | W11-1 |
 | W9-2 | Separate dispatcher and reconcile processors | One 30-second `publishing-tick` job runs `dispatchDue` then `reconcileStale` | One scheduler entry guarantees a single run across workers | — (accepted) |
+| W10-3 | `campaignReport` compares results with the objective KPI | Social metrics (views, reach, engagements, clicks) are reported per post and in total; progress towards the objective uses a current value the team enters | Objectives count business outcomes (inquiries, leads, attendees) that Meta cannot measure | — (accepted); automatic lead capture is post-MVP |
+| W10-3 | Impressions | `views` (Facebook `post_media_view`, Instagram `views`) | Meta deprecated impressions for posts in 2025 | — (platform change) |
+| W10-4 | Playwright; charts library | Render tests; a small lazily loaded SVG-free bar chart in HTML, single hue from the reference palette | Same as W2-6; no chart library needed for one bar chart | W12 |
 | — | TypeScript 7 | TypeScript 6.0 | typescript-eslint does not support 7 yet | When supported |
 | — | Lean images | API/worker images ~1 GB | Prisma 7 CLI (needed for migrations) is large | Separate migrate image, W11 |
